@@ -104,10 +104,10 @@ class GDrive():
         print(path_items)
         folder_id = 'root'
 
-        for i in range(0, len(path_items)):
+        for item in path_items:
         
             response = self.service.files().list(
-                q="mimeType='application/vnd.google-apps.folder' and name='{}' and '{}' in parents".format(path_items[i], folder_id),
+                q="mimeType='application/vnd.google-apps.folder' and name='{}' and '{}' in parents".format(item, folder_id),
                 spaces='drive',
                 fields='files(id, name)'
             ).execute()
