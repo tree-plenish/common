@@ -101,7 +101,6 @@ class GDrive():
         # Returns ID of folder
 
         path_items = pathToFolder.split('/')
-        print(path_items)
         folder_id = 'root'
 
         for item in path_items:
@@ -120,3 +119,19 @@ class GDrive():
             folder_id = file.get('id')            
 
         return folder_id
+
+    def getAllFiles(self, parentFolderID):
+        # Function to get all file names and IDs from a folder
+        # Param: parentFolderID as string
+        # Returns dict of filename : fileID for all files in the folder
+        files = {}
+        response = self.service.files().list(
+            q="parents in '{}'".format(parentFolderID),
+            spaces='drive',
+            fields='files(id, name)'
+        ).execute()
+
+        for item in response.get('files', []):
+            files[item.get('name')] = item.get('id')
+        return files
+
