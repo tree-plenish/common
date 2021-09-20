@@ -119,6 +119,21 @@ class GDrive():
         print('File ID: %s' % file.get('id'))
         return file.get('id')
 
+    def uploadShareableFile(self, sourceFilePath, destinationFileName, **kwargs):
+        # Function to upload file to Google Drive and share with everyone.
+        # Params: sourceFilePath: file path of local file as string, 
+        #         destinationFileName: file name in Google Drive as string
+        #         optional parent folder path (parentPath=) or parent folder ID (parentID=) as string
+        # Since there is no way to directly access a folder from its name/path with the Google Drive API, 
+        # using folder ID (if known) is more efficient than folder path.
+        # Shares file to anyone with link and returns source link to uploaded file 
+        # (source link can be used as src for image in html)
+        fid = self.uploadFile(sourceFilePath, destinationFileName, **kwargs)
+
+        shared = self.service.permissions().create(fileId=fid, body={'role': 'reader', 'type': 'anyone'}).execute()
+
+        return "https://drive.google.com/uc?export=view&id=" + fid
+
     def folderIDFromPath(self, pathToFolder):
         # Function to get folder id from path to folder 
         # Params: pathToFolder as string
