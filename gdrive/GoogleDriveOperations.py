@@ -119,6 +119,21 @@ class GDrive():
         print('File ID: %s' % file.get('id'))
         return file.get('id')
 
+    def updateFile(self, sourceFilePath, destinationFileId):
+        # Function to overwrite the content of a file in Google Drive. Does not change file metadata 
+        # (file name, sharing access, etc.)
+        # Params: sourceFilePath: file path of local file as string,
+        #         destinationFileId: alphanumeric id of file in Google Drive to overwrite file content of
+        #         (can be obtained from the return value of uploadFile, from getAllFiles, or manually in 
+        #         the url of the view link for the file)
+
+        fileType = mimetypes.guess_type(sourceFilePath)[0]
+        if not fileType:
+            raise Exception('File type invalid or could not be determined')
+
+        media = MediaFileUpload(sourceFilePath, mimetype=fileType)
+        file = self.service.files().update(fileId=destinationFileId, media_body=media).execute()
+
     def uploadShareableFile(self, sourceFilePath, destinationFileName, **kwargs):
         # Function to upload file to Google Drive and share with everyone.
         # Params: sourceFilePath: file path of local file as string, 
